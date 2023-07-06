@@ -1,6 +1,7 @@
 import express from "express";
 import { body } from "express-validator";
 import { login, register } from "../controllers/auth.controller.js";
+import { validarErrores } from "../middlewares/validarErrores.js";
 const router = express.Router();
 
 router.post(
@@ -20,8 +21,13 @@ router.post(
       return value;
     }),
   ],
+  validarErrores,
   register
 );
-router.post("/login", login);
+router.post(
+  "/login",
+  [body("email", "Email invalido").trim().isEmail().normalizeEmail()],
+  login
+);
 
 export default router;
