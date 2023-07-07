@@ -1,7 +1,8 @@
-import express from "express";
+import { Router } from "express";
 import { body } from "express-validator";
 import { login, register } from "../controllers/auth.controller.js";
-const router = express.Router();
+import { checarError } from "../middlewares/checarError.js";
+const router = Router();
 
 router.post(
   "/register",
@@ -20,8 +21,13 @@ router.post(
       return value;
     }),
   ],
+  checarError,
   register
 );
-router.post("/login", login);
-
+router.post(
+  "/login",
+  [body("email", "Email invalido").trim().isEmail().normalizeEmail()],
+  checarError,
+  login
+);
 export default router;

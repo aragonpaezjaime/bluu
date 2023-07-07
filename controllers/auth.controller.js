@@ -1,13 +1,17 @@
-import { validationResult } from "express-validator";
-export const register = (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(400).json({ errores: errors.array() });
+import { User } from "../models/users.js";
+export const register = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const usuario = new User({ email, password });
+    await usuario.save();
+    return res.status(201).json({ ok: true });
+  } catch (error) {
+    if (error.code === 11000)
+      return res.status(400).json({ msg: "error: email en uso" });
   }
-  console.log(req.body);
-  res.json({ ok: register });
+  res.status(500).json({ mensaje: "Error de servidor" });
 };
 
-export const login = (req, res) => {
-  res.json({ ok: true });
+export const login = async (req, res) => {
+  res.json({ ok: "Login" });
 };
